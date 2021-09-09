@@ -1,11 +1,34 @@
-###Simple logging library written for C in stb style
+# A simple logging library written for C in stb style
 
-#Usage:
-`
-\#define CLOGGER_IMPLEMENTATION
-\#include "clogger.h"
-int main(){
-	LOG_ERROR("This is an error (%s)", "More Info");	
-	return 0;	
-}`
+### Usage:
+```c
+#define CLOGGER_IMPLEMENTATION  
+#include "clogger.h"  
+int main(){  
+	clogger_init();
+	
+	LOG_ERROR("This is an error (%s)", "More Info");
+	flush_queue();
+	
+	clogger_quit();
+	return 0;
+}
+```
+### Available levels
+```c
+LOG_FATAL("Message");
+LOG_ERROR("Message");
+LOG_WARN("Message");
+LOG_INFO("Message");
+LOG_DEBUG("Message");
+LOG_TRACE("Message");
+```
+```
+[2021-09-09 13:00:20][FTL]: main.c Message
+[2021-09-09 13:00:20][ERR]: main.c Message
+[2021-09-09 13:00:20][WAR]: main.c Message
+[2021-09-09 13:00:20][INF]: main.c Message
+[2021-09-09 13:00:20][DBG]: main.c Message
+[2021-09-09 13:00:20][TRC]: main.c Message
+```
 
