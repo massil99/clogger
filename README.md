@@ -7,5 +7,5 @@
 int main(){  
 	LOG_ERROR("This is an error (%s)", "More Info");  
 	return 0;
-}```
+}`
 
