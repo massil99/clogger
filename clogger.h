@@ -27,6 +27,8 @@ void flush_queue();
 #endif //CLOGGER_H_
 
 #ifdef CLOGGER_IMPLEMENTATION
+#include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 #include <time.h>
 #include <unistd.h>

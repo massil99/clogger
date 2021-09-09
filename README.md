@@ -1,5 +1,4 @@
 # A simple logging library written for C in stb style
-
 ### Usage:
 ```c
 #define CLOGGER_IMPLEMENTATION  
