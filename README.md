@@ -16,12 +16,12 @@ int main(){
 ```
 ### Available levels
 ```c
-LOG_FATAL("Message")
-LOG_ERROR("Message")
-LOG_WARN("Message")
-LOG_INFO("Message")
-LOG_DEBUG("Message")
-LOG_TRACE("Message")
+LOG_FATAL("Message");
+LOG_ERROR("Message");
+LOG_WARN("Message");
+LOG_INFO("Message");
+LOG_DEBUG("Message");
+LOG_TRACE("Message");
 ```
 ```
 [2021-09-09 13:00:20][FTL]: main.c Message
