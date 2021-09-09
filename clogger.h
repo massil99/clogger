@@ -23,7 +23,9 @@
 #define LOG_TRACE(m, ...)\
 	queue_up(TRACE_PREFIX GRAY_TEXT(__FILE__) m, ##__VA_ARGS__)
 
+void clogger_init();
 void flush_queue();
+void clogger_quit();
 #endif //CLOGGER_H_
 
 #ifdef CLOGGER_IMPLEMENTATION
@@ -43,10 +45,14 @@ struct message_queue{
 	struct message* first;
 	struct message* last;
 };
-int output_file = STDOUT_FILENO;
+
+FILE* output_file = stdout;
 struct message_queue q;
 
-void clogger_init(){
+void clogger_init(char file_name){
+	FILE* temp = fopen(file_name, "w");
+	if(temp != NULL)
+		output_file = temp;
 	q.first = NULL;
 	q.last = NULL;
 }
@@ -64,9 +70,9 @@ char* get_date_time(){
 		exit(1);
     }
     
-	char *res = malloc(sizeof(char) * 256);
+    char *res = malloc(sizeof(char) * 256);
     sprintf(res, "\033[1m[%04d-%02d-%02d %02d:%02d:%02d]\033[0m", ptm->tm_year+1900, ptm->tm_mon+1, ptm->tm_mday, ptm->tm_hour, ptm->tm_min, ptm->tm_sec);
-	return res;
+    return res;
 }
 
 void queue_up(char msg[256], ...){
@@ -101,7 +107,7 @@ struct message* dequeue(){
 void flush_queue(){
 	while(q.first != NULL){
 		struct message* l = dequeue();
-		printf("%s\n", l->content);
+		sprintf(output_file, "%s\n", l->content);
 		free(l);
 	}
 }
@@ -111,6 +117,7 @@ void clogger_quit(){
 		struct message* l = dequeue();
 		free(l);
 	}
+	fclose(output_file);
 }
 
 #endif //CLOGGER_IMPLEMENT
