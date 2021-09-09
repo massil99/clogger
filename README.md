@@ -1,5 +1,4 @@
 # A simple logging library written for C in stb style
-
 ### Usage:
 ```c
 #define CLOGGER_IMPLEMENTATION  
@@ -31,4 +30,3 @@ LOG_TRACE("Message");
 [2021-09-09 13:00:20][DBG]: main.c Message
 [2021-09-09 13:00:20][TRC]: main.c Message
 ```
-
