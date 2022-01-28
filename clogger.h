@@ -10,22 +10,17 @@
 #define GRAY_TEXT(m)\
 	 "\033[1;90m"m"\033[1;0m "
 
-#define LOG_FATAL(m, ...)\
-	queue_up(FATAL_PREFIX GRAY_TEXT(__FILE__) m,  ##__VA_ARGS__)
-#define LOG_ERROR(m, ...)\
-	queue_up(ERROR_PREFIX GRAY_TEXT(__FILE__) m, ##__VA_ARGS__)
-#define LOG_WARN(m, ...)\
-	queue_up(WARN_PREFIX GRAY_TEXT(__FILE__) m, ##__VA_ARGS__)
-#define LOG_INFO(m, ...)\
-	queue_up(INFO_PREFIX GRAY_TEXT(__FILE__) m, ##__VA_ARGS__)
-#define LOG_DEBUG(m, ...)\
-	queue_up(DEBUG_PREFIX GRAY_TEXT(__FILE__) m, ##__VA_ARGS__)
-#define LOG_TRACE(m, ...)\
-	queue_up(TRACE_PREFIX GRAY_TEXT(__FILE__) m, ##__VA_ARGS__)
 
 void clogger_init(char *file_name);
 void flush_queue();
 void clogger_quit();
+void LOG_FATAL(char *m, ...);
+void LOG_ERROR(char *m, ...);
+void LOG_INFO(char *m, ...);
+void LOG_DEBUG(char *m, ...);
+void LOG_TRACE(char *m, ...);
+void LOG_WARN(char *m, ...);
+
 #endif //CLOGGER_H_
 
 #ifdef CLOGGER_IMPLEMENTATION
@@ -46,17 +41,20 @@ struct message_queue{
 	struct message* last;
 };
 
-FILE* output_file = stdout;
+FILE* output_file = NULL; 
 struct message_queue q;
+int style = 1;
 
 void clogger_init(char *file_name){
 	if(file_name != NULL){
-		FILE* temp = fopen(file_name, "w");
-		if(temp != NULL)
+		FILE* temp = fopen(file_name, "aa");
+		if(temp != NULL){
 			output_file = temp;
-		else
+			style = 0;
+		}else
 			fprintf(stderr, "No such file (%s)", file_name);
-	}
+	}else
+		output_file = stdout;
 	q.first = NULL;
 	q.last = NULL;
 }
@@ -75,19 +73,21 @@ char* get_date_time(){
     }
     
     char *res = malloc(sizeof(char) * 256);
-    sprintf(res, "\033[1m[%04d-%02d-%02d %02d:%02d:%02d]\033[0m", ptm->tm_year+1900, ptm->tm_mon+1, ptm->tm_mday, ptm->tm_hour, ptm->tm_min, ptm->tm_sec);
+	if(style)
+    	sprintf(res, "\033[1m[%04d-%02d-%02d %02d:%02d:%02d]\033[0m", ptm->tm_year+1900, ptm->tm_mon+1, ptm->tm_mday, ptm->tm_hour, ptm->tm_min, ptm->tm_sec);
+	else
+    	sprintf(res, "[%04d-%02d-%02d %02d:%02d:%02d]", ptm->tm_year+1900, ptm->tm_mon+1, ptm->tm_mday, ptm->tm_hour, ptm->tm_min, ptm->tm_sec);
     return res;
 }
 
-void queue_up(char msg[256], ...){
+void queue_up(char *msg, va_list args){
 	char *dt = get_date_time();
-	va_list args;
 	struct message* m_msg = malloc(sizeof(struct message));
 
-	va_start(args, msg);
 	strcpy(m_msg->content, strcat(dt, msg));	
-	vsprintf(m_msg->content, m_msg->content, args);
-	va_end(args);
+	char tem[256];
+	vsprintf(tem, m_msg->content, args);
+	strcpy(m_msg->content, tem);
 
 	if(q.last == NULL && q.first == NULL){
 		m_msg->prev = NULL;
@@ -101,6 +101,94 @@ void queue_up(char msg[256], ...){
 	free(dt);
 }
 
+void LOG_FATAL(char *m, ...){
+	va_list args;
+	va_start(args, m);
+	if(style){
+		char temp[256] = "";
+		strcat(temp, FATAL_PREFIX);
+		queue_up(strcat(temp, m), args);
+	}else{
+		char temp[256] = "";
+		strcat(temp, "[FTL]: ");
+		queue_up(strcat(temp, m), args);
+	}
+
+	va_end(args);
+}
+
+void LOG_ERROR(char *m, ...){
+	va_list args;
+	va_start(args, m);
+	if(style){
+		char temp[256] = "";
+		strcat(temp, ERROR_PREFIX);
+		queue_up(strcat(temp, m), args);
+	}else{
+		char temp[256] = "";
+		strcat(temp, "[ERR]: ");
+		queue_up(strcat(temp, m), args);
+	}
+
+	va_end(args);
+}
+void LOG_WARN(char *m, ...){
+	va_list args;
+	va_start(args, m);
+	if(style){
+		char temp[256] = "";
+		strcat(temp, WARN_PREFIX);
+		queue_up(strcat(temp, m), args);
+	}else{
+		char temp[256] = "";
+		strcat(temp, "[WRN]: ");
+		queue_up(strcat(temp, m), args);
+	}
+	va_end(args);
+}
+void LOG_INFO(char *m, ...){
+	va_list args;
+	va_start(args, m);
+	if(style){
+		char temp[256] = "";
+		strcat(temp, INFO_PREFIX);
+		queue_up(strcat(temp, m), args);
+	}else{
+		char temp[256] = "";
+		strcat(temp, "[INF]: ");
+		queue_up(strcat(temp, m), args);
+	}
+	va_end(args);
+}
+void LOG_DEBUG(char *m, ...){
+	va_list args;
+	va_start(args, m);
+	if(style){
+		char temp[256] = "";
+		strcat(temp, DEBUG_PREFIX);
+		queue_up(strcat(temp, m), args);
+	}else{
+		char temp[256] = "";
+		strcat(temp, "[DBG]: ");
+		queue_up(strcat(temp, m), args);
+	}
+	va_end(args);
+}
+void LOG_TRACE(char *m, ...){
+	va_list args;
+	va_start(args, m);
+	if(style){
+		char temp[256] = "";
+		strcat(temp, TRACE_PREFIX);
+		queue_up(strcat(temp, m), args);
+	}else{
+		char temp[256] = "";
+		strcat(temp, "[TRC]: ");
+		queue_up(strcat(temp, m), args);
+	}
+	va_end(args);
+}
+
 struct message* dequeue(){
 	struct message* l = q.first;
 	if(l != NULL)
@@ -111,7 +199,7 @@ struct message* dequeue(){
 void flush_queue(){
 	while(q.first != NULL){
 		struct message* l = dequeue();
-		sprintf(output_file, "%s\n", l->content);
+		fprintf(output_file, "%s\n", l->content);
 		free(l);
 	}
 }
