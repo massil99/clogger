@@ -4,7 +4,7 @@
 #define CLOGGER_IMPLEMENTATION  
 #include "clogger.h"  
 int main(){  
-	clogger_init();
+	clogger_init("logs.log");
 	
 	LOG_ERROR("This is an error (%s)", "More Info");
 	flush_queue();

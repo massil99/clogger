@@ -23,7 +23,7 @@
 #define LOG_TRACE(m, ...)\
 	queue_up(TRACE_PREFIX GRAY_TEXT(__FILE__) m, ##__VA_ARGS__)
 
-void clogger_init();
+void clogger_init(char *file_name);
 void flush_queue();
 void clogger_quit();
 #endif //CLOGGER_H_
@@ -49,10 +49,14 @@ struct message_queue{
 FILE* output_file = stdout;
 struct message_queue q;
 
-void clogger_init(char file_name){
-	FILE* temp = fopen(file_name, "w");
-	if(temp != NULL)
-		output_file = temp;
+void clogger_init(char *file_name){
+	if(file_name != NULL){
+		FILE* temp = fopen(file_name, "w");
+		if(temp != NULL)
+			output_file = temp;
+		else
+			fprintf(stderr, "No such file (%s)", file_name);
+	}
 	q.first = NULL;
 	q.last = NULL;
 }
