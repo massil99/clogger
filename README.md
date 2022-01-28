@@ -23,10 +23,10 @@ LOG_DEBUG("Message");
 LOG_TRACE("Message");
 ```
 ```
-[2021-09-09 13:00:20][FTL]: main.c Message
-[2021-09-09 13:00:20][ERR]: main.c Message
-[2021-09-09 13:00:20][WAR]: main.c Message
-[2021-09-09 13:00:20][INF]: main.c Message
-[2021-09-09 13:00:20][DBG]: main.c Message
-[2021-09-09 13:00:20][TRC]: main.c Message
+[2021-09-09 13:00:20][FTL]: Message
+[2021-09-09 13:00:20][ERR]: Message
+[2021-09-09 13:00:20][WAR]: Message
+[2021-09-09 13:00:20][INF]: Message
+[2021-09-09 13:00:20][DBG]: Message
+[2021-09-09 13:00:20][TRC]: Message
 ```
