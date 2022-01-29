@@ -11,7 +11,7 @@
 	 "\033[1;90m"m"\033[1;0m "
 
 
-void clogger_init(char *file_name);
+void clogger_init(char *file_name, int showTimestamp);
 void flush_queue();
 void clogger_quit();
 void LOG_FATAL(char *m, ...);
@@ -31,6 +31,10 @@ void LOG_WARN(char *m, ...);
 #include <unistd.h>
 #include <stdarg.h>
 
+#define bool int
+#define true 1
+#define false 0
+
 struct message{
 	char content[256];
 	struct message* prev;
@@ -43,14 +47,16 @@ struct message_queue{
 
 FILE* output_file = NULL; 
 struct message_queue q;
-int style = 1;
+bool style = true;
+bool timestamp = true;
 
-void clogger_init(char *file_name){
+void clogger_init(char *file_name, bool showTimestamp){
+	timestamp = showTimestamp;
 	if(file_name != NULL){
 		FILE* temp = fopen(file_name, "aa");
 		if(temp != NULL){
 			output_file = temp;
-			style = 0;
+			style = false;
 		}else
 			fprintf(stderr, "No such file (%s)", file_name);
 	}else
@@ -81,10 +87,15 @@ char* get_date_time(){
 }
 
 void queue_up(char *msg, va_list args){
-	char *dt = get_date_time();
 	struct message* m_msg = malloc(sizeof(struct message));
 
-	strcpy(m_msg->content, strcat(dt, msg));	
+	if(timestamp){
+		char *dt = get_date_time();
+		strcpy(m_msg->content, strcat(dt, msg));	
+		free(dt);
+	}else
+		strcpy(m_msg->content, msg);	
+
 	char tem[256];
 	vsprintf(tem, m_msg->content, args);
 	strcpy(m_msg->content, tem);
@@ -98,7 +109,6 @@ void queue_up(char *msg, va_list args){
 		q.last->prev = m_msg;
 		q.last = m_msg;
 	}
-	free(dt);
 }
 
 void LOG_FATAL(char *m, ...){
