@@ -1,5 +1,5 @@
-# A simple logging library written for C in stb style
-### Usage:
+# A simple single file logging library in C 
+### Example
 ```c
 #define CLOGGER_IMPLEMENTATION  
 #include "clogger.h"  
